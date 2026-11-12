@@ -4,6 +4,7 @@ import { defineConfig } from "vitest/config";
 const project = (name: string, environment: "node" | "jsdom") => ({
 	extends: true,
 	test: {
+		passWithNoTests: true,
 		name,
 		environment,
 		include: [`src/**/*.${name}.test.{ts,tsx}`],
@@ -15,6 +16,7 @@ export default defineConfig({
 	plugins: [react()],
 	resolve: { tsconfigPaths: true },
 	test: {
+		passWithNoTests: true,
 		projects: [
 			project("unit", "node"),
 			project("integration", "node"),
