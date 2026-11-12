@@ -2,6 +2,9 @@
 	"name": "portfolio",
 	"private": true,
 	"packageManager": "pnpm@11.13.0",
+	"engines": {
+		"node": ">=22"
+	},
 	"type": "module",
 	"imports": {
 		"#/*": "./src/*"
@@ -23,19 +26,13 @@
 		"test:integration": "vitest run --project integration",
 		"test:component": "vitest run --project component",
 		"test:e2e": "playwright test",
-		"test": "pnpm test:unit && pnpm test:component && pnpm test:integration && pnpm test:e2e"
+		"test": "pnpm test:unit && pnpm test:component && pnpm test:integration && pnpm test:e2e",
+		"typecheck": "tsc --noEmit",
+		"prepare": "git config core.hooksPath .githooks"
 	},
 	"dependencies": {
-		"@faker-js/faker": "^10.3.0",
 		"@modelcontextprotocol/sdk": "^1.27.1",
 		"@tailwindcss/vite": "^4.1.18",
-		"@tanstack/ai": "1.4.0",
-		"@tanstack/ai-anthropic": "1.1.1",
-		"@tanstack/ai-client": "1.1.0",
-		"@tanstack/ai-gemini": "1.2.1",
-		"@tanstack/ai-ollama": "1.1.1",
-		"@tanstack/ai-openai": "1.1.1",
-		"@tanstack/ai-react": "1.0.2",
 		"@tanstack/match-sorter-utils": "9.2.6",
 		"@tanstack/react-devtools": "0.10.14",
 		"@tanstack/react-form": "1.33.5",
@@ -48,8 +45,6 @@
 		"better-auth": "^1.5.3",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
-		"cn": "^0.5.2",
-		"drizzle-kit": "^0.31.9",
 		"drizzle-orm": "^0.45.1",
 		"highlight.js": "^11.11.1",
 		"lucide-react": "^0.577.0",
@@ -79,6 +74,7 @@
 		"@types/react-dom": "^19.2.0",
 		"@vitejs/plugin-react": "^6.0.1",
 		"dotenv": "^17.3.1",
+		"drizzle-kit": "^0.31.11",
 		"jsdom": "^31.0.0",
 		"tsx": "^4.21.0",
 		"typescript": "^6.0.2",
