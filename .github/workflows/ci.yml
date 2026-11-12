@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  DATABASE_URL: postgres://ci:ci@localhost:5432/portfolio
+  BETTER_AUTH_URL: http://localhost:3000
+  BETTER_AUTH_SECRET: ci-secret-ci-secret-ci-secret-ci-secret
+
+jobs:
+  tests:
+    name: ${{ matrix.kind }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        kind: [unit, component, integration, e2e]
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: portfolio
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U ci -d portfolio"
+          --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - if: matrix.kind == 'integration' || matrix.kind == 'e2e'
+        run: pnpm db:push --force
+      - if: matrix.kind == 'e2e'
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run ${{ matrix.kind }} tests
+        run: |
+          if [ "${{ matrix.kind }}" = e2e ]; then
+            pnpm exec playwright test --reporter=list,json
+          else
+            pnpm exec vitest run --project ${{ matrix.kind }} --reporter=default --reporter=json --outputFile.json=report.json
+          fi
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_NAME: report.json
+
+      - name: Count tests
+        if: always()
+        run: |
+          [ -f report.json ] || { echo "### ${{ matrix.kind }} : aucun rapport" >> "$GITHUB_STEP_SUMMARY"; exit 0; }
+          if [ "${{ matrix.kind }}" = e2e ]; then
+            jq -r '"### e2e : \(.stats.expected) réussis, \(.stats.unexpected) échoués, \(.stats.skipped) ignorés"' report.json
+          else
+            jq -r '"### ${{ matrix.kind }} : \(.numPassedTests)/\(.numTotalTests) réussis, \(.numFailedTests) échoués"' report.json
+          fi >> "$GITHUB_STEP_SUMMARY"

@@ -17,7 +17,12 @@
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push",
 		"db:pull": "drizzle-kit pull",
-		"db:studio": "drizzle-kit studio"
+		"db:studio": "drizzle-kit studio",
+		"test:unit": "vitest run --project unit",
+		"test:integration": "vitest run --project integration",
+		"test:component": "vitest run --project component",
+		"test:e2e": "playwright test",
+		"test": "pnpm test:unit && pnpm test:component && pnpm test:integration && pnpm test:e2e"
 	},
 	"dependencies": {
 		"@faker-js/faker": "^10.3.0",
@@ -60,18 +65,24 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.5",
+		"@playwright/test": "^1.65.0",
 		"@tailwindcss/typography": "^0.5.16",
 		"@tanstack/devtools-event-client": "0.5.1",
 		"@tanstack/devtools-vite": "0.8.6",
+		"@testing-library/jest-dom": "^7.0.1",
+		"@testing-library/react": "^16.3.3",
+		"@testing-library/user-event": "^14.6.8",
 		"@types/node": "^22.10.2",
 		"@types/pg": "^8.15.6",
 		"@types/react": "^19.2.0",
 		"@types/react-dom": "^19.2.0",
 		"@vitejs/plugin-react": "^6.0.1",
 		"dotenv": "^17.3.1",
+		"jsdom": "^31.0.0",
 		"tsx": "^4.21.0",
 		"typescript": "^6.0.2",
-		"vite": "^8.0.0"
+		"vite": "^8.0.0",
+		"vitest": "^5.1.0"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
